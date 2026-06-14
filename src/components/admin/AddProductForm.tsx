@@ -75,7 +75,6 @@ export default function AddProductForm({ product, onSuccess, onCancel }: Props) 
             "Avakaya Pickle",
             "Gongura Pickle",
             "Lemon Pickle",
-            "Amla Pickle",
             "Garlic Pickle",
             "Mango Pickle",
             "Chicken Pickle",

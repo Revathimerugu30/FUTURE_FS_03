@@ -6,13 +6,12 @@ import { Search } from "lucide-react";
 import { endpoints } from "@/lib/api";
 import ProductCard from "@/components/site/ProductCard";
 
-const CATS = ["All", "Avakaya Pickle", "Gongura Pickle", "Lemon Pickle", "Amla Pickle", "Garlic Pickle", "Mango Pickle", "Chicken Pickle", "Mutton Pickle", "Fish Pickle", "Prawn Pickle", "kakarkaya Pickle"];
+const CATS = ["All", "Avakaya Pickle", "Gongura Pickle", "Lemon Pickle", "Garlic Pickle", "Mango Pickle", "Chicken Pickle", "Mutton Pickle", "Fish Pickle", "Prawn Pickle", "kakarkaya Pickle"];
 
 const CATEGORY_IMAGES: Record<string, string> = {
   "Avakaya Pickle": "/images/avakaya-pickle.png",
   "Gongura Pickle": "/images/gongura.png",
   "Lemon Pickle": "/images/lemon.png",
-  "Amla Pickle": "/images/amla.jpg",
   "Garlic Pickle": "/images/garlic.png",
   "Mango Pickle": "/images/mango.png",
   "Chicken Pickle": "/images/chick.png",
