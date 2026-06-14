@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Home, IndianRupee, Clock, TrendingUp } from "lucide-react";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useAuth } from "@/lib/auth-context";
 import { endpoints } from "@/lib/api";
 import AddProductForm from "@/components/admin/AddProductForm";
@@ -227,18 +228,56 @@ function AdminDashboard() {
                 <div className="mt-8 grid gap-6 lg:grid-cols-2">
                   <div className="card-elevated p-6">
                     <div className="flex items-center gap-2 font-display text-lg font-bold text-maroon-deep"><TrendingUp size={18} /> Revenue (last 12 days)</div>
-                    <div className="mt-6 flex h-48 items-end gap-2">
-                      {(stats.data?.revenueByDay || []).map((m: any) => {
-                        const max = Math.max(...(stats.data.revenueByDay || []).map((x: any) => x.revenue), 1);
-                        return (
-                          <div key={m._id} className="flex flex-1 flex-col items-center gap-1">
-                            <div className="w-full rounded-t-md bg-gradient-to-t from-maroon to-gold" style={{ height: `${(m.revenue / max) * 100}%` }} />
-                            <div className="text-[10px] text-muted-foreground">{m._id.slice(8)}</div>
-                          </div>
-                        );
-                      })}
-                      {!stats.data?.revenueByDay?.length && <div className="text-sm text-muted-foreground">No data yet.</div>}
+                    <div className="mt-6 h-72">
+                      {stats.data?.revenueByDay?.length ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={stats.data.revenueByDay} margin={{ top: 10, right: 12, left: -12, bottom: 10 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                            <XAxis
+                              dataKey="_id"
+                              tickFormatter={(value: string) => value.slice(5)}
+                              tick={{ fill: "#6b7280", fontSize: 10 }}
+                              interval="preserveStartEnd"
+                              minTickGap={12}
+                            />
+                            <YAxis
+                              tickFormatter={(value: number) => `₹${value}`}
+                              tick={{ fill: "#6b7280", fontSize: 10 }}
+                            />
+                            <Tooltip
+                              formatter={(value: number) => [`₹${value.toLocaleString()}`, "Revenue"]}
+                              labelFormatter={(label) => `Date: ${label}`}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="revenue"
+                              stroke="#7c2d12"
+                              strokeWidth={3}
+                              dot={{ r: 4, strokeWidth: 0 }}
+                              activeDot={{ r: 6 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      ) : (
+                        <div className="flex h-full min-h-[170px] items-center justify-center text-sm text-muted-foreground">No data yet.</div>
+                      )}
                     </div>
+                    {stats.data?.revenueByDay?.length ? (
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-lg bg-card p-3 text-sm">
+                          <div className="text-xs uppercase tracking-wider text-muted-foreground">Total revenue</div>
+                          <div className="mt-2 font-display text-xl font-bold text-maroon-deep">
+                            ₹{stats.data.revenueByDay.reduce((sum: number, item: any) => sum + item.revenue, 0).toLocaleString()}
+                          </div>
+                        </div>
+                        <div className="rounded-lg bg-card p-3 text-sm">
+                          <div className="text-xs uppercase tracking-wider text-muted-foreground">Average per day</div>
+                          <div className="mt-2 font-display text-xl font-bold text-maroon-deep">
+                            ₹{Math.round(stats.data.revenueByDay.reduce((sum: number, item: any) => sum + item.revenue, 0) / stats.data.revenueByDay.length).toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                   <div className="card-elevated p-6">
                     <div className="font-display text-lg font-bold text-maroon-deep">Recent orders</div>
