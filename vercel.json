@@ -15,12 +15,12 @@
   ],
   "routes": [
     {
-      "src": "/(assets|images)/(.*)",
-      "dest": "/dist/client/$1/$2"
+      "src": "^/(assets|images)/(.*)$",
+      "dest": "/$1/$2"
     },
     {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|svg|webp|json|ico|woff2?))$",
-      "dest": "/dist/client/$1"
+      "src": "^/(.*\\.(js|css|png|jpg|jpeg|svg|webp|json|ico|woff2?))$",
+      "dest": "/$1"
     },
     {
       "src": "^/(.*)$",
