@@ -1,26 +1,5 @@
 {
-  "version": 3,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist/client"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "^/(assets|images)/(.*)$",
-      "dest": "/$1/$2"
-    },
-    {
-      "src": "^/(.*\\.(js|css|png|jpg|jpeg|svg|webp|json|ico|woff2?))$",
-      "dest": "/$1"
-    },
-    {
-      "src": "^/(.*)$",
-      "dest": "/api/index.js"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/client"
 }
+
