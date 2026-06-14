@@ -107,7 +107,6 @@ function SiteChrome({ children }: { children: ReactNode }) {
       {!hideChrome && <Navbar />}
       <main className={hideChrome ? "" : "min-h-screen"}>{children}</main>
       {!hideChrome && <Footer />}
-      {!hideChrome && <WhatsAppButton />}
     </>
   );
 }
