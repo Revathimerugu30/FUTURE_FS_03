@@ -8,6 +8,20 @@ import ProductCard from "@/components/site/ProductCard";
 
 const CATS = ["All", "Avakaya Pickle", "Gongura Pickle", "Lemon Pickle", "Amla Pickle", "Garlic Pickle", "Mango Pickle", "Chicken Pickle", "Mutton Pickle", "Fish Pickle", "Prawn Pickle", "kakarkaya Pickle"];
 
+const CATEGORY_IMAGES: Record<string, string> = {
+  "Avakaya Pickle": "/images/avakaya-pickle.png",
+  "Gongura Pickle": "/images/gongura.png",
+  "Lemon Pickle": "/images/lemon.png",
+  "Amla Pickle": "/images/amla.jpg",
+  "Garlic Pickle": "/images/garlic.png",
+  "Mango Pickle": "/images/mango.png",
+  "Chicken Pickle": "/images/chick.png",
+  "Mutton Pickle": "/images/mutton.jpeg",
+  "Fish Pickle": "/images/fish.png",
+  "Prawn Pickle": "/images/prawn.png",
+  "kakarkaya Pickle": "/images/kakarkaya.png",
+};
+
 export const Route = createFileRoute("/products")({
   head: () => ({ meta: [{ title: "Our Pickles — Vasista Pickles" }, { name: "description", content: "Browse our complete collection of authentic homemade pickles." }] }),
   validateSearch: (s: Record<string, unknown>) => ({ category: (s.category as string) || "", q: (s.q as string) || "", sort: (s.sort as string) || "-createdAt" }),
@@ -24,6 +38,9 @@ function ProductsPage() {
     queryFn: async () => (await endpoints.products.list({ category: search.category || undefined, q: search.q || undefined, sort: search.sort, limit: 48 })).data,
     retry: 0,
   });
+
+  const selectedCategory = (search.category as string) || "";
+  const categoryImage = selectedCategory ? CATEGORY_IMAGES[selectedCategory] : undefined;
 
   return (
     <div className="bg-cream pt-32 pb-20">
@@ -47,6 +64,12 @@ function ProductsPage() {
             <option value="-rating">Top Rated</option>
           </select>
         </div>
+
+        {selectedCategory && categoryImage && (
+          <div className="mt-6 rounded-lg overflow-hidden">
+            <img src={categoryImage} alt={selectedCategory} className="w-full h-44 object-cover rounded-lg" />
+          </div>
+        )}
 
         <div className="mt-6 flex flex-wrap gap-2">
           {CATS.map((c) => {
