@@ -39,8 +39,6 @@ function ProductsPage() {
     retry: 0,
   });
 
-  const selectedCategory = (search.category as string) || "";
-  const categoryImage = selectedCategory ? CATEGORY_IMAGES[selectedCategory] : undefined;
 
   return (
     <div className="bg-cream pt-32 pb-20">
@@ -64,12 +62,6 @@ function ProductsPage() {
             <option value="-rating">Top Rated</option>
           </select>
         </div>
-
-        {selectedCategory && categoryImage && (
-          <div className="mt-6 rounded-lg overflow-hidden">
-            <img src={categoryImage} alt={selectedCategory} className="w-full h-44 object-cover rounded-lg" />
-          </div>
-        )}
 
         <div className="mt-6 flex flex-wrap gap-2">
           {CATS.map((c) => {
