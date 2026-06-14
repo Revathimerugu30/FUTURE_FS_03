@@ -28,6 +28,7 @@ const FEATURES = [
 const CATEGORIES = [
   { name: "Avakaya Pickle", img: "/images/avakaya-pickle.png" },
   { name: "Gongura Pickle", img: "/images/gongura.png" },
+  { name: "Amla Pickle", img: "/images/amla.jpg" },
   { name: "Chicken Pickle", img: "/images/chick.png" },
   { name: "Prawn Pickle", img: "/images/prawn.png" },
 ];
