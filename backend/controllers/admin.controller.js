@@ -26,11 +26,11 @@ exports.dashboard = async (_req, res) => {
         { $limit: 12 },
       ]),
     ]);
-  const revenueByMonth = await Order.aggregate([
+  const revenueByDay = await Order.aggregate([
     { $match: { status: { $ne: 'Cancelled' } } },
     {
       $group: {
-        _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
         revenue: { $sum: '$amount' },
         orders: { $sum: 1 },
       },
@@ -47,7 +47,7 @@ exports.dashboard = async (_req, res) => {
       pending,
       revenue: revenueAgg[0]?.total || 0,
     },
-    revenueByMonth,
+    revenueByDay,
     customerGrowth: growth,
     recentOrders,
   });

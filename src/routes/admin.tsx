@@ -226,18 +226,18 @@ function AdminDashboard() {
                 </div>
                 <div className="mt-8 grid gap-6 lg:grid-cols-2">
                   <div className="card-elevated p-6">
-                    <div className="flex items-center gap-2 font-display text-lg font-bold text-maroon-deep"><TrendingUp size={18} /> Revenue (last 12 months)</div>
+                    <div className="flex items-center gap-2 font-display text-lg font-bold text-maroon-deep"><TrendingUp size={18} /> Revenue (last 12 days)</div>
                     <div className="mt-6 flex h-48 items-end gap-2">
-                      {(stats.data?.revenueByMonth || []).map((m: any) => {
-                        const max = Math.max(...(stats.data.revenueByMonth || []).map((x: any) => x.revenue), 1);
+                      {(stats.data?.revenueByDay || []).map((m: any) => {
+                        const max = Math.max(...(stats.data.revenueByDay || []).map((x: any) => x.revenue), 1);
                         return (
                           <div key={m._id} className="flex flex-1 flex-col items-center gap-1">
                             <div className="w-full rounded-t-md bg-gradient-to-t from-maroon to-gold" style={{ height: `${(m.revenue / max) * 100}%` }} />
-                            <div className="text-[10px] text-muted-foreground">{m._id.slice(5)}</div>
+                            <div className="text-[10px] text-muted-foreground">{m._id.slice(8)}</div>
                           </div>
                         );
                       })}
-                      {!stats.data?.revenueByMonth?.length && <div className="text-sm text-muted-foreground">No data yet.</div>}
+                      {!stats.data?.revenueByDay?.length && <div className="text-sm text-muted-foreground">No data yet.</div>}
                     </div>
                   </div>
                   <div className="card-elevated p-6">
