@@ -25,6 +25,7 @@ function AdminDashboard() {
   const [tab, setTab] = useState<"overview" | "products" | "orders" | "customers">("overview");
   const [showAdd, setShowAdd] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
+  const [dateInputs, setDateInputs] = useState<Record<string, { shippingDate: any; expectedDeliveryDate: any }>>({});
 
   useEffect(() => {
     if (loading) return;
@@ -384,8 +385,39 @@ function AdminDashboard() {
                   </thead>
                   <tbody>
                     {(orders.data || []).map((o: any) => {
-                      const ship = normalizeDate(o.shippingDate);
-                      const deliver = normalizeDate(o.expectedDeliveryDate);
+                      const ship = normalizeDate(dateInputs[o._id]?.shippingDate ?? o.shippingDate);
+                      const deliver = normalizeDate(dateInputs[o._id]?.expectedDeliveryDate ?? o.expectedDeliveryDate);
+                      
+                      const setLocalDateInput = (orderId: string, field: 'shippingDate' | 'expectedDeliveryDate', overrides: { year?: number; month?: number | string; day?: number | string }) => {
+                        const currentValue = dateInputs[orderId]?.[field] ?? (field === 'shippingDate' ? o.shippingDate : o.expectedDeliveryDate);
+                        setDateInputs(prev => ({
+                          ...prev,
+                          [orderId]: {
+                            ...prev[orderId],
+                            [field]: makeDateString(currentValue, overrides),
+                          },
+                        }));
+                      };
+
+                      const commitDateChange = (orderId: string, field: 'shippingDate' | 'expectedDeliveryDate') => {
+                        const newValue = dateInputs[orderId]?.[field];
+                        if (newValue) {
+                          setStatus.mutate(augmentStatusPayload({
+                            id: orderId,
+                            [field]: newValue,
+                            status: o.status,
+                          }));
+                          setDateInputs(prev => {
+                            const copy = { ...prev };
+                            if (copy[orderId]) {
+                              delete copy[orderId][field];
+                              if (Object.keys(copy[orderId]).length === 0) delete copy[orderId];
+                            }
+                            return copy;
+                          });
+                        }
+                      };
+
                       return (
                         <tr key={o._id} className="border-t border-border">
                           <td className="p-3 font-mono text-xs">#{o._id.slice(-6).toUpperCase()}</td>
@@ -438,11 +470,8 @@ function AdminDashboard() {
                                   <div className="text-[9px] text-muted-foreground">MM</div>
                                   <select
                                     value={ship.month || ''}
-                                    onChange={(e) => setStatus.mutate(augmentStatusPayload({
-                                      id: o._id,
-                                      shippingDate: makeDateString(o.shippingDate, { month: e.target.value }),
-                                      status: o.status,
-                                    }))}
+                                    onChange={(e) => setLocalDateInput(o._id, 'shippingDate', { month: e.target.value })}
+                                    onBlur={() => commitDateChange(o._id, 'shippingDate')}
                                     className="w-14 rounded border border-border bg-card px-1 py-1 text-xs"
                                   >
                                     <option value="">—</option>
@@ -455,11 +484,8 @@ function AdminDashboard() {
                                   <div className="text-[9px] text-muted-foreground">DD</div>
                                   <select
                                     value={ship.day || ''}
-                                    onChange={(e) => setStatus.mutate(augmentStatusPayload({
-                                      id: o._id,
-                                      shippingDate: makeDateString(o.shippingDate, { day: e.target.value }),
-                                      status: o.status,
-                                    }))}
+                                    onChange={(e) => setLocalDateInput(o._id, 'shippingDate', { day: e.target.value })}
+                                    onBlur={() => commitDateChange(o._id, 'shippingDate')}
                                     className="w-14 rounded border border-border bg-card px-1 py-1 text-xs"
                                   >
                                     <option value="">—</option>
@@ -472,11 +498,8 @@ function AdminDashboard() {
                                   <div className="text-[9px] text-muted-foreground">YYYY</div>
                                   <select
                                     value={ship.year}
-                                    onChange={(e) => setStatus.mutate(augmentStatusPayload({
-                                      id: o._id,
-                                      shippingDate: makeDateString(o.shippingDate, { year: Number(e.target.value) }),
-                                      status: o.status,
-                                    }))}
+                                    onChange={(e) => setLocalDateInput(o._id, 'shippingDate', { year: Number(e.target.value) })}
+                                    onBlur={() => commitDateChange(o._id, 'shippingDate')}
                                     className="rounded border border-border bg-card px-1 py-1 text-xs"
                                   >
                                     {yearOptions.map((year) => (
@@ -493,11 +516,8 @@ function AdminDashboard() {
                                   <div className="text-[9px] text-muted-foreground">MM</div>
                                   <select
                                     value={deliver.month || ''}
-                                    onChange={(e) => setStatus.mutate(augmentStatusPayload({
-                                      id: o._id,
-                                      expectedDeliveryDate: makeDateString(o.expectedDeliveryDate, { month: e.target.value }),
-                                      status: o.status,
-                                    }))}
+                                    onChange={(e) => setLocalDateInput(o._id, 'expectedDeliveryDate', { month: e.target.value })}
+                                    onBlur={() => commitDateChange(o._id, 'expectedDeliveryDate')}
                                     className="w-14 rounded border border-border bg-card px-1 py-1 text-xs"
                                   >
                                     <option value="">—</option>
@@ -510,11 +530,8 @@ function AdminDashboard() {
                                   <div className="text-[9px] text-muted-foreground">DD</div>
                                   <select
                                     value={deliver.day || ''}
-                                    onChange={(e) => setStatus.mutate(augmentStatusPayload({
-                                      id: o._id,
-                                      expectedDeliveryDate: makeDateString(o.expectedDeliveryDate, { day: e.target.value }),
-                                      status: o.status,
-                                    }))}
+                                    onChange={(e) => setLocalDateInput(o._id, 'expectedDeliveryDate', { day: e.target.value })}
+                                    onBlur={() => commitDateChange(o._id, 'expectedDeliveryDate')}
                                     className="w-14 rounded border border-border bg-card px-1 py-1 text-xs"
                                   >
                                     <option value="">—</option>
@@ -527,11 +544,8 @@ function AdminDashboard() {
                                   <div className="text-[9px] text-muted-foreground">YYYY</div>
                                   <select
                                     value={deliver.year}
-                                    onChange={(e) => setStatus.mutate(augmentStatusPayload({
-                                      id: o._id,
-                                      expectedDeliveryDate: makeDateString(o.expectedDeliveryDate, { year: Number(e.target.value) }),
-                                      status: o.status,
-                                    }))}
+                                    onChange={(e) => setLocalDateInput(o._id, 'expectedDeliveryDate', { year: Number(e.target.value) })}
+                                    onBlur={() => commitDateChange(o._id, 'expectedDeliveryDate')}
                                     className="rounded border border-border bg-card px-1 py-1 text-xs"
                                   >
                                     {yearOptions.map((year) => (
